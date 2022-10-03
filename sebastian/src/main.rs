@@ -24,9 +24,6 @@ pub struct GetMeterPlusStatusResponse {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMeterPlusStatusResponseBody {
-    pub device_id: String,
-    pub device_type: String,
-    pub hub_device_id: String,
     pub temperature: f32,
     pub humidity: u8,
 }
