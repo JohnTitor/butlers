@@ -1,13 +1,13 @@
-use std::env;
+use std::{env, fs::OpenOptions};
 
 use reqwest::header;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 fn main() {
     let device_id = env::var("DEVICE_ID").expect("DEVICE_ID must be set");
     let api_key = env::var("API_KEY").expect("API_KEY must be set");
-    if let Err(e) = check_current_temp(&device_id, &api_key) {
-        eprintln!("check_current_temp error: {}", e);
+    if let Err(e) = record_current_temp(&device_id, &api_key) {
+        eprintln!("record_current_temp error: {}", e);
     }
 }
 
@@ -19,14 +19,14 @@ pub struct GetMeterPlusStatusResponse {
     pub message: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMeterPlusStatusResponseBody {
     pub temperature: f32,
     pub humidity: u8,
 }
 
-fn check_current_temp(
+fn record_current_temp(
     device_id: &str,
     api_key: &str,
 ) -> Result<(), reqwest::Error> {
@@ -38,8 +38,10 @@ fn check_current_temp(
         .header(header::AUTHORIZATION, api_key)
         .send()?
         .json::<GetMeterPlusStatusResponse>()?;
-    println!("Current temperature: {:.1}", resp.body.temperature);
 
+    let file = OpenOptions::new().write(true).create(true).append(true).open("./data/temp_humidity.csv").unwrap();
+    let mut wtr = csv::WriterBuilder::new().has_headers(false).from_writer(file);
+    wtr.serialize(resp.body).unwrap();
     Ok(())
 }
 
