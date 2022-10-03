@@ -17,6 +17,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - run: cargo run -p sebastian
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          DEVICE_ID: ${{ secrets.DEVICE_ID }}
 
       - name: Commit and push changes
         run: |
