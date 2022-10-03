@@ -1,0 +1,27 @@
+name: Record temp/humidity
+on:
+  schedule:
+    - cron: */30 * * * * # every 30 minutes
+  workflow_dispatch:
+
+jobs:
+  record:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: |
+        rustup override set stable
+        rustup update stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - run: cargo run -p sebastian
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Record temp/humidity"
+          git push
