@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.65"
 csv = "1.1.6"
 # plotly = { version = "0.8", features = ["kaleido"] }
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 serde = { version = "1", features = ["derive"] }
+time = { version = "0.3", features = ["formatting", "macros", "serde"] }
